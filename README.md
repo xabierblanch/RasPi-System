@@ -3,11 +3,14 @@ Author: Xabier Blanch<br/>
 Contact: xabierblanch@gmail.com<br/>
 
 Codes and scripts programmed for the correct operation of RasPi systems installed in Puigcercós (Catalunya).
-Codes developed as part of a doctoral research at Universtiy of Barcelona (PhD)
+
+Codes developed as part of a doctoral research at Universtiy of Barcelona (PhD). All these codes are developed for a particular case, some modifications will be necessary. If you use these codes or if they inspire you in your work, please share it with me :D (And cite it correctly).
 
 How to cite:
 -----
-Pending publication (PhD thesis)
+* Pending publication (PhD thesis)
+
+* Blanch, X.; Abellan, A.; Guinau, M. Point Cloud Stacking: A Workflow to Enhance 3D Monitoring Capabilities Using Time-Lapse Cameras. Remote Sens. 2020, 12, 1240. https://doi.org/10.3390/rs12081240
 
 Image:
 -----
