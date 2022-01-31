@@ -76,7 +76,7 @@ def dropbox_upload():
 		for file in os.listdir(path_directe):
 			f=open(arrel_directori_directe + file, 'rb')
 			try:
-				dbx = dropbox.Dropbox("XAM6jFayu0AAAAAAAAAr3FYBgoNjm8t1dYX3olkB6YLMxnEbJhnfUvpLF0zhd7YN")
+				dbx = dropbox.Dropbox("TOKEN")
 				res=dbx.files_upload(f.read(),'/' + file)
 				shutil.move(arrel_directori_directe + file, arrel_directori_final + file)
 				print('fitxer', res.name, 'penjat correctament i mogut a la carpeta ' + ID + 'Puigcercos')
