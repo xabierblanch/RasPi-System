@@ -33,10 +33,18 @@
 
 ## Installation steps:
 
-- [x] Install RPi OS [Raspberry Pi OS Lite (Legacy](https://downloads.raspberrypi.org/raspios_oldstable_lite_armhf/images/raspios_oldstable_lite_armhf-2022-09-26/2022-09-22-raspios-buster-armhf-lite.img.xz)
-- [X] Install WittyPi software [WittyPi](https://www.uugear.com/product/witty-pi-3-realtime-clock-and-power-management-for-raspberry-pi/)
-- [X] Create a folder called USB 
-
+- [x] Install RPi OS -> [Raspberry Pi OS Lite (Legacy)](https://downloads.raspberrypi.org/raspios_oldstable_lite_armhf/images/raspios_oldstable_lite_armhf-2022-09-26/2022-09-22-raspios-buster-armhf-lite.img.xz)
+- [X] Install WittyPi software -> [WittyPi](https://www.uugear.com/product/witty-pi-3-realtime-clock-and-power-management-for-raspberry-pi/)
+- [X] Assembling the WittyPi and Camera to the RPi
+- [X] Create the mount folder (called USB):
+```
+sudo mkdir /media/usb
+```
+- [x] Copy the files of this repository
+- [x] Activate the camera using [+info](https://projects.raspberrypi.org/en/projects/getting-started-with-picamera/):
+```
+sudo raspi-config
+```
 
 ## Tested with:
 - [x] RPi Zero W + WittyPi3
