@@ -1,20 +1,24 @@
 import os
 import dropbox
 
-arrel_directori = '/home/pi/logs/'
+##################### DROPBOX TOKEN ##########################
 
-def dropbox_upload():
-    
-    for file in os.listdir('/home/pi/logs'):
-        f=open(arrel_directori + file, 'rb')
+token = ''
+
+#############################################################
+
+path = '/home/pi/logs'
+
+def dropbox_upload(token, path):
+    for file in os.listdir(path):
+        f=open(os.path.join(path,file), 'rb')
         try:
-           dbx = dropbox.Dropbox("XAM6jFayu0AAAAAAAAAr3FYBgoNjm8t1dYX3olkB6YLMxnEbJhnfUvpLF0zhd7YN")
+           dbx = dropbox.Dropbox(token)
            res=dbx.files_upload(f.read(),'/log/' + file, mode=dropbox.files.WriteMode.overwrite)
-           print('log', res.name, 'penjat correctament')
+           print('log', res.name, 'loaded')
         except dropbox.exceptions.ApiError as err:
            print('*** API error', err)
            return none
     return res
 
-dropbox_upload()
-    
+dropbox_upload(token, path)
