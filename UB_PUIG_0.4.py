@@ -1,11 +1,10 @@
 #! /usr/bin/python
 
-## PROGRAMA DE CAPTURA DE FOTOGRAFIES AUTOMATICA ##
-##########  GRUP DE RECERCA RISKNAT  ##############
-########## UNIVERSITAT DE  BARCELONA  #############
-###############  XABIER BLANCH  ###################
+### LIGHT TIME-LAPSE RASPBERRY PI CAMERA SYSTEM ###
+############ RISKNAT RESEARCH GROUP ###############
+############ UNIVERSITY OF BARCELONA ##############
+################ XABIER BLANCH ####################
 
-# importacio de la llibreria de control de la camara
 from picamera import PiCamera
 from time import sleep
 import datetime
@@ -14,20 +13,20 @@ import dropbox
 import os
 import time
 
-print('\nEXECUCIO DEL SCRIPT UB_PUIG_0.4 DE LA UNIVERSITAT DE BARCELONA\n')
-print('Grup de Recerca RISKNAT. Departament de Dinamica de la Terra i de lOcea')
-print('Desenvolupat per: Xabier Blanch Gorriz\n')
+print('\nEXECUTION OF UB_PUIG_0.4 SCRIPT FROM THE UNIVERSITY OF BARCELONA\n')
+print('RISKNAT Research Group. Department of Earth and Ocean Dynamics')
+print('Developed by: Xabier Blanch Gorriz\n')
 
 #########################################################################
 #########################################################################
 
-#IDENTIFICADOR DEL SISTEMA -> IMPORTANT CANVIAR-HO CORRECTAMENT
+#SYSTEM IDENTIFIER
 
 ID = "RPi_00_"
 
-#PARÀMETRE CAPTURA (NUMERO DE CAPTURES A FER INSTANTANEAMENT)
+#NUMBER OF CAPTURES (BURST MODE)
 
-captures = 5
+burst_num = 5
 
 #TOKEN (DROPBOX)
 
@@ -36,21 +35,13 @@ token = ""
 #########################################################################
 #########################################################################
 
-print(datetime.datetime.now().strftime("Hora: %H:%M Data: %d/%m/%Y"))
-print()
-
-arrel_directori_directe = "/home/pi/" + ID + "Puigcercos_filetransfer/"
-path_directe = "/home/pi/" + ID + "Puigcercos_filetransfer"
-arrel_directori_final = "/home/pi/" + ID + "Puigcercos/"
-path_final = "/home/pi/" + ID + "Puigcercos"
-
 def setup_camera():
 	try:
 		camera = PiCamera()
 		camera.meter_mode = 'average'
 		camera.awb_mode = 'auto'
 		camera.iso = 100
-		sleep(3)
+		sleep(2)
 
 		if camera.revision == 'imx477':
 			camera.resolution = (4056,3040)
@@ -65,33 +56,31 @@ def setup_camera():
 		print(get_time() + 'ERROR: Camera module not found')
 	return camera
 
-def directori():
-	try:
-		os.makedirs(arrel_directori_directe)
-		os.makedirs(arrel_directori_final)
-	except:
-		print("Les carpetes  " + ID + "Puigcercos i " + ID + "Puigecercos_filetransfer ja existeixen")
-	os.chdir(arrel_directori_directe)
+def paths():
+	os.makedirs(path_temp, exist_ok=True)
+	os.makedirs(path_backup, exist_ok=True)
+	print(f"The {path_temp}  + and {path_backup} were succesfuly created")
 
-def fotografia(count, camera):
-	data = datetime.datetime.now().strftime('%Y%m%d_%H%M')
+def image_capture(count, camera):	
+	date = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 	try:
-		camera.capture(arrel_directori_directe + ID + data + '_' + str(count) + '.jpg', format='jpeg', quality=100)
-		print ('Captura ' + data + '_' + str(count) + ' realitzada amb exit')
+		save_file = os.path.join(path, ID+date+'_'+str(count)+'.jpg')
+		camera.capture(save_file, format='jpeg', quality=100)
+		print(get_time() + 'Image: ' + date + '_' + str(count) + ' successfully captured')
 	except:
-		print ('Error de PiCAMERA')
+		print(get_time() + 'ERROR: Image capture fail')		
 
 def dropbox_upload(token):
-	if os.listdir(path_directe) == []:
-		print("No hi ha fitxers a la carpeta " + ID + "_Puigcercos_filetransfer per pujar al Dropbox")
+	if os.listdir(path_temp) == []:
+		print(f"There are no files in the {path_temp} folder to upload to Dropbox")
 	else:
-		for file in os.listdir(path_directe):
-			f=open(arrel_directori_directe + file, 'rb')
+		for file in os.listdir(path_temp):
+			f=open(os.path.join(path_temp,file), 'rb')
 			try:
 				dbx = dropbox.Dropbox(token)
 				res=dbx.files_upload(f.read(),'/' + file)
-				shutil.move(arrel_directori_directe + file, arrel_directori_final + file)
-				print('fitxer', res.name, 'penjat correctament i mogut a la carpeta ' + ID + 'Puigcercos')
+				shutil.move(os.path.join(path_temp,file), os.path.join(path_backup,file))
+				print(f'File {res.name} successfully uploaded to Dropbox and backup stored')
 			except dropbox.exceptions.ApiError as err:
 				print('*** API error', err)
 				return none
@@ -101,28 +90,31 @@ def borrar_fitxers():
 	data_actual = time.time()
 	eliminats = 0
 	for fitxer in os.listdir(path_final):
-		data_fitxer = os.path.getmtime(arrel_directori_final + fitxer)
-		if ((data_actual - data_fitxer) / (24*3600)) >= 15:
-			os.unlink(arrel_directori_final + fitxer)
+		data_fitxer = os.path.getmtime(os.path.join(path_backup,file))
+		if ((data_actual - data_fitxer) / (24*3600)) >= 30:
+			os.unlink(os.path.join(path_backup,file))
 			eliminats = eliminats + 1
-	print("S'han eliminat " + str(eliminats) + " fitxers per alliberar espai a la targeta de memòria")
+	print(f"{str(eliminats)} files have been deleted due to exceeding the maximum number of days of backup")
 
-# SEQUENCIA DE FUNCIONS - PROGRAMA PRINCIPAL
+# MAIN CODE
+print(datetime.datetime.now().strftime("Time: %H:%M Date: %d/%m/%Y"))
+
+path_temp = "/home/pi/" + ID + "filetransfer"
+path_backup = "/home/pi/" + ID + "backup"
 
 camera = setup_camera()
-directori()
+paths()
 borrar_fitxers()
 count=1
-for count in range (1, captures+1):
-	fotografia(count, camera)
+for count in range (1, burst_num+1):
+	image_capture(count, camera)
 	sleep(1)
 	count=count + 1
-print()
-sleep(3)
+
+sleep(1)
 try:
 	dropbox_upload(token)
 except:
-	print("Error DROPBOX - Error en la càrrega de fitxers a Dropbox")
+	print("Error DROPBOX - Error in the transfer of files to Dropbox")
 print()
-print("Codi finalitzat")
 print("******************************************************************")
