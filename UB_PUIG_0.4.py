@@ -55,7 +55,7 @@ def setup_camera():
 def paths():
 	os.makedirs(path_temp, exist_ok=True)
 	os.makedirs(path_backup, exist_ok=True)
-	print(get_time() + f"The {path_temp}  + and {path_backup} were succesfuly created")
+	print(get_time() + f"The {path_temp} and {path_backup} were succesfuly created")
 
 def image_capture(count, camera, path_temp):	
 	date = datetime.datetime.now().strftime('%Y%m%d_%H%M')
@@ -97,8 +97,6 @@ def get_time():
 	return date
 
 # MAIN CODE
-print(datetime.datetime.now().strftime("Time: %H:%M Date: %d/%m/%Y"))
-
 path_temp = "/home/pi/" + ID + "filetransfer"
 path_backup = "/home/pi/" + ID + "backup"
 
