@@ -23,11 +23,15 @@ print('Desenvolupat per: Xabier Blanch Gorriz\n')
 
 #IDENTIFICADOR DEL SISTEMA -> IMPORTANT CANVIAR-HO CORRECTAMENT
 
-ID = "RasPi04_"
+ID = "RPi_00_"
 
 #PARÀMETRE CAPTURA (NUMERO DE CAPTURES A FER INSTANTANEAMENT)
 
-captures = 15
+captures = 5
+
+#TOKEN (DROPBOX)
+
+token = ""
 
 #########################################################################
 #########################################################################
@@ -35,23 +39,31 @@ captures = 15
 print(datetime.datetime.now().strftime("Hora: %H:%M Data: %d/%m/%Y"))
 print()
 
-# assignacio de variables
-camera = PiCamera()
-
-# propietats de la captura fotografica
-camera.resolution = (3280, 2464)
-camera.meter_mode = 'spot'
-camera.iso = 100
-sleep(3)
-camera.exposure_mode = 'off'
-camera.awb_mode = 'auto'
-sleep(3)
-camera.sharpness = 50
-
 arrel_directori_directe = "/home/pi/" + ID + "Puigcercos_filetransfer/"
 path_directe = "/home/pi/" + ID + "Puigcercos_filetransfer"
 arrel_directori_final = "/home/pi/" + ID + "Puigcercos/"
 path_final = "/home/pi/" + ID + "Puigcercos"
+
+def setup_camera():
+	try:
+		camera = PiCamera()
+		camera.meter_mode = 'average'
+		camera.awb_mode = 'auto'
+		camera.iso = 100
+		sleep(3)
+
+		if camera.revision == 'imx477':
+			camera.resolution = (4056,3040)
+			print(get_time() + f'Camera HQ detected. Resolution: {camera.resolution}')
+		elif camera.revision == 'imx219':
+			camera.resolution = (3280, 2464)
+			print(get_time() + f'Camera V2 detected. Resolution: {camera.resolution}')
+		else:
+			camera.resolution = (2592, 1944)
+			print(get_time() + f'Camera V1 detected. Resolution: {camera.resolution}')
+	except:
+		print(get_time() + 'ERROR: Camera module not found')
+	return camera
 
 def directori():
 	try:
@@ -61,7 +73,7 @@ def directori():
 		print("Les carpetes  " + ID + "Puigcercos i " + ID + "Puigecercos_filetransfer ja existeixen")
 	os.chdir(arrel_directori_directe)
 
-def fotografia(count):
+def fotografia(count, camera):
 	data = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 	try:
 		camera.capture(arrel_directori_directe + ID + data + '_' + str(count) + '.jpg', format='jpeg', quality=100)
@@ -69,14 +81,14 @@ def fotografia(count):
 	except:
 		print ('Error de PiCAMERA')
 
-def dropbox_upload():
+def dropbox_upload(token):
 	if os.listdir(path_directe) == []:
 		print("No hi ha fitxers a la carpeta " + ID + "_Puigcercos_filetransfer per pujar al Dropbox")
 	else:
 		for file in os.listdir(path_directe):
 			f=open(arrel_directori_directe + file, 'rb')
 			try:
-				dbx = dropbox.Dropbox("TOKEN")
+				dbx = dropbox.Dropbox(token)
 				res=dbx.files_upload(f.read(),'/' + file)
 				shutil.move(arrel_directori_directe + file, arrel_directori_final + file)
 				print('fitxer', res.name, 'penjat correctament i mogut a la carpeta ' + ID + 'Puigcercos')
@@ -97,19 +109,18 @@ def borrar_fitxers():
 
 # SEQUENCIA DE FUNCIONS - PROGRAMA PRINCIPAL
 
+camera = setup_camera()
 directori()
-print()
 borrar_fitxers()
-print()
 count=1
 for count in range (1, captures+1):
-	fotografia(count)
+	fotografia(count, camera)
 	sleep(1)
 	count=count + 1
 print()
-sleep(5)
+sleep(3)
 try:
-	dropbox_upload()
+	dropbox_upload(token)
 except:
 	print("Error DROPBOX - Error en la càrrega de fitxers a Dropbox")
 print()
