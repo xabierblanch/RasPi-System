@@ -13,10 +13,6 @@ import dropbox
 import os
 import time
 
-print('\nEXECUTION OF UB_PUIG_0.4 SCRIPT FROM THE UNIVERSITY OF BARCELONA\n')
-print('RISKNAT Research Group. Department of Earth and Ocean Dynamics')
-print('Developed by: Xabier Blanch Gorriz\n')
-
 #########################################################################
 #########################################################################
 
@@ -45,34 +41,34 @@ def setup_camera():
 
 		if camera.revision == 'imx477':
 			camera.resolution = (4056,3040)
-			print(f'Camera HQ detected. Resolution: {camera.resolution}')
+			print(get_time() + f'Camera HQ detected. Resolution: {camera.resolution}')
 		elif camera.revision == 'imx219':
 			camera.resolution = (3280, 2464)
-			print(f'Camera V2 detected. Resolution: {camera.resolution}')
+			print(get_time() + f'Camera V2 detected. Resolution: {camera.resolution}')
 		else:
 			camera.resolution = (2592, 1944)
-			print(f'Camera V1 detected. Resolution: {camera.resolution}')
+			print(get_time() + f'Camera V1 detected. Resolution: {camera.resolution}')
 	except:
-		print('ERROR: Camera module not found')
+		print(get_time() + 'ERROR: Camera module not found')
 	return camera
 
 def paths():
 	os.makedirs(path_temp, exist_ok=True)
 	os.makedirs(path_backup, exist_ok=True)
-	print(f"The {path_temp}  + and {path_backup} were succesfuly created")
+	print(get_time() + f"The {path_temp}  + and {path_backup} were succesfuly created")
 
 def image_capture(count, camera, path_temp):	
 	date = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 	try:
 		save_file = os.path.join(path_temp, ID+date+'_'+str(count)+'.jpg')
 		camera.capture(save_file, format='jpeg', quality=100)
-		print('Image: ' + date + '_' + str(count) + ' successfully captured')
+		print(get_time() + 'Image: ' + date + '_' + str(count) + ' successfully captured')
 	except:
-		print('ERROR: Image capture fail')		
+		print(get_time() + 'ERROR: Image capture fail')		
 
 def dropbox_upload(token, path_temp, path_backup):
 	if os.listdir(path_temp) == []:
-		print(f"There are no files in the {path_temp} folder to upload to Dropbox")
+		print(get_time() + f"There are no files in the {path_temp} folder to upload to Dropbox")
 	else:
 		for file in os.listdir(path_temp):
 			f=open(os.path.join(path_temp,file), 'rb')
@@ -80,9 +76,9 @@ def dropbox_upload(token, path_temp, path_backup):
 				dbx = dropbox.Dropbox(token)
 				res=dbx.files_upload(f.read(),'/' + file)
 				shutil.move(os.path.join(path_temp, file), os.path.join(path_backup, file))
-				print(f'File {res.name} successfully uploaded to Dropbox and backup stored')
+				print(get_time() + f'File {res.name} successfully uploaded to Dropbox and backup stored')
 			except dropbox.exceptions.ApiError as err:
-				print('*** API error', err)
+				print(get_time() + '*** API error', err)
 				return none
 		return res
 
@@ -94,7 +90,11 @@ def delete_backup(path_backup):
 		if ((today - data_file) / (24*3600)) >= 30:
 			os.unlink(os.path.join(path_backup, file))
 			deleted = deleted + 1
-	print(f"{str(deleted)} files have been deleted due to exceeding the maximum number of days of backup")
+	print(get_time() + f"{str(deleted)} files have been deleted due to exceeding the maximum number of days of backup")
+
+def get_time():
+	date = datetime.datetime.now().strftime('[%Y-%m-%d %H:%M:%S] ')
+	return date
 
 # MAIN CODE
 print(datetime.datetime.now().strftime("Time: %H:%M Date: %d/%m/%Y"))
@@ -115,6 +115,6 @@ sleep(1)
 try:
 	dropbox_upload(token, path_temp, path_backup)
 except:
-	print("Error DROPBOX - Error in the transfer of files to Dropbox")
+	print(get_time() + "Error DROPBOX - Error in the transfer of files to Dropbox")
 print()
 print("******************************************************************")
