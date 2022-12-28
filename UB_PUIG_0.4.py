@@ -28,6 +28,10 @@ burst_num = 5
 
 token = ""
 
+#BACKUP DAYS
+
+backup_days = 30
+
 #########################################################################
 #########################################################################
 
@@ -55,7 +59,7 @@ def setup_camera():
 def paths():
 	os.makedirs(path_temp, exist_ok=True)
 	os.makedirs(path_backup, exist_ok=True)
-	print(get_time() + f"The {path_temp} and {path_backup} were succesfuly created")
+	print(get_time() + f"The {path_temp} and {path_backup} folders were succesfuly created")
 
 def image_capture(count, camera, path_temp):	
 	date = datetime.datetime.now().strftime('%Y%m%d_%H%M')
@@ -82,15 +86,15 @@ def dropbox_upload(token, path_temp, path_backup):
 				return none
 		return res
 
-def delete_backup(path_backup):
+def delete_backup(path_backup, backup_days):
 	today = time.time()
 	deleted = 0
 	for file in os.listdir(path_backup):
 		data_file = os.path.getmtime(os.path.join(path_backup, file))
-		if ((today - data_file) / (24*3600)) >= 30:
+		if ((today - data_file) / (24*3600)) >= backup_days:
 			os.unlink(os.path.join(path_backup, file))
 			deleted = deleted + 1
-	print(get_time() + f"{str(deleted)} files have been deleted due to exceeding the maximum number of days of backup")
+	print(get_time() + f"{str(deleted)} files have been deleted due to exceeding the maximum backup days ({backup_days} days)")
 
 def get_time():
 	date = datetime.datetime.now().strftime('[%Y-%m-%d %H:%M:%S] ')
@@ -99,10 +103,9 @@ def get_time():
 # MAIN CODE
 path_temp = "/home/pi/" + ID + "filetransfer"
 path_backup = "/home/pi/" + ID + "backup"
-
 camera = setup_camera()
 paths()
-delete_backup(path_backup)
+delete_backup(path_backup, backup_days)
 count=1
 for count in range (1, burst_num+1):
 	image_capture(count, camera, path_temp)
@@ -115,4 +118,3 @@ try:
 except:
 	print(get_time() + "Error DROPBOX - Error in the transfer of files to Dropbox")
 print()
-print("******************************************************************")
