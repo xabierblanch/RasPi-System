@@ -29,5 +29,6 @@ def copylogs(path):
 	except:
 		print('ERROR: WittyPi log files')
 
+os.makedirs(path, exist_ok=True)
 copylogs(path)
 dropbox_upload(token, path)
