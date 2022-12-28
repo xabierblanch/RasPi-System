@@ -94,7 +94,7 @@ def delete_backup(path_backup, backup_days):
 		if ((today - data_file) / (24*3600)) >= backup_days:
 			os.unlink(os.path.join(path_backup, file))
 			deleted = deleted + 1
-	print(get_time() + f"{str(deleted)} files have been deleted due to exceeding the maximum backup days ({backup_days} days)")
+	print(get_time() + f"{deleted} files have been deleted due to exceeding the maximum backup days ({backup_days} days)")
 
 def get_time():
 	date = datetime.datetime.now().strftime('[%Y-%m-%d %H:%M:%S] ')
