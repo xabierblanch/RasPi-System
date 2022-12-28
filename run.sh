@@ -1,6 +1,6 @@
 #! /bin/bash
 
-python3 /home/pi/Scripts/UB_PUIG_0.4.py >> /home/pi/logs/script.log
+python3 /home/pi/Scripts/main_v1.1.py >> /home/pi/logs/script.log
 
 python3 /home/pi/Scripts/upload_logs.py
 
