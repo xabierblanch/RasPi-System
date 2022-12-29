@@ -101,10 +101,9 @@ def get_time():
 	return date
 
 # MAIN CODE
-path_log = "/home/pi/logs"
 path_temp = "/home/pi/" + ID + "filetransfer"
 path_backup = "/home/pi/" + ID + "backup"
-os.makedirs(path_log, exist_ok=True)
+
 camera = setup_camera()
 paths()
 delete_backup(path_backup, backup_days)
