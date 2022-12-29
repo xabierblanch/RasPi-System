@@ -68,7 +68,7 @@ def image_capture(count, camera, path_temp):
 	try:
 		save_file = os.path.join(path_temp, ID + '_' + date + '_' + str(count) + '.jpg')
 		camera.capture(save_file, format='jpeg', quality=100)
-		print(get_time() 'Image ' + ID + '_' + date + '_' + str(count) + '.jpg' + ' successfully captured')
+		print(get_time() + 'Image ' + ID + '_' + date + '_' + str(count) + '.jpg' + ' successfully captured')
 	except:
 		print(get_time() + 'ERROR: Image capture fail')	
 		
