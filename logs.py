@@ -11,16 +11,16 @@ token = ''
 path = '/home/pi/logs'
 
 def dropbox_upload(token, path):
-    for file in os.listdir(path):
-        f=open(os.path.join(path,file), 'rb')
-        try:
-           dbx = dropbox.Dropbox(token)
-           res=dbx.files_upload(f.read(),'/log/' + file, mode=dropbox.files.WriteMode.overwrite)
-           print('log', res.name, 'loaded to Dropbox')
-        except dropbox.exceptions.ApiError as err:
-           print('*** API error', err)
-           return none
-    return res
+	for file in os.listdir(path):
+        	f=open(os.path.join(path,file), 'rb')
+        	try:
+           		dbx = dropbox.Dropbox(token)
+           		res=dbx.files_upload(f.read(),'/log/' + file, mode=dropbox.files.WriteMode.overwrite)
+           		print('log', res.name, 'loaded to Dropbox')
+        	except dropbox.exceptions.ApiError as err:
+           		print('*** API error', err)
+           		return none
+	return res
 
 def copylogs(path):
 	try:
