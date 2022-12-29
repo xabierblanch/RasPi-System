@@ -1,5 +1,8 @@
 #! /bin/bash
 
+#create logs folder
+mkdir -p /home/pi/logs
+
 #run main script
 python3 /home/pi/scripts/main_v1.1.py >> /home/pi/logs/script.log
 
