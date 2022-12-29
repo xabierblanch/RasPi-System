@@ -18,7 +18,7 @@ import time
 
 #SYSTEM IDENTIFIER
 
-ID = "RPi_00_"
+ID = "RPi_test"
 
 #NUMBER OF CAPTURES (BURST MODE)
 
@@ -66,9 +66,9 @@ def paths():
 def image_capture(count, camera, path_temp):	
 	date = datetime.datetime.now().strftime('%Y%m%d_%H%M')
 	try:
-		save_file = os.path.join(path_temp, ID+date+'_'+str(count)+'.jpg')
+		save_file = os.path.join(path_temp, ID + '_' + date + '_' + str(count) + '.jpg')
 		camera.capture(save_file, format='jpeg', quality=100)
-		print(get_time() + 'Image: ' + date + '_' + str(count) + ' successfully captured')
+		print(get_time() 'Image ' + ID + '_' + date + '_' + str(count) + '.jpg' + ' successfully captured')
 	except:
 		print(get_time() + 'ERROR: Image capture fail')	
 		
@@ -118,4 +118,3 @@ for count in range (1, burst_num+1):
 	count=count + 1
 sleep(1)
 res = dropbox_upload(refresh_token, app_key, app_secret, path_temp, path_backup)
-print(res)
