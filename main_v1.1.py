@@ -24,11 +24,11 @@ ID = "RPi_test"
 
 burst_num = 5
 
-#DROPBOX USER INFORMATION
+#DROPBOX USER INFORMATION (check official Dropbox API)
 
-app_key = 'so8ksun3q9jq9ob'
-app_secret = 'arssteb8pv6blxb'
-refresh_token = 'Kpm3y-06pRcAAAAAAAAAAWzz07NrxAkpHOLQmy6QwyAeVKyhwQk-VAeXZXtCExcD'
+app_key = ''
+app_secret = ''
+refresh_token = '' #https://github.com/dropbox/dropbox-sdk-python/blob/main/example/oauth/commandline-oauth.py
 
 #BACKUP DAYS
 
@@ -118,3 +118,4 @@ for count in range (1, burst_num+1):
 	count=count + 1
 sleep(1)
 res = dropbox_upload(refresh_token, app_key, app_secret, path_temp, path_backup)
+print()
