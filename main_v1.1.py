@@ -24,9 +24,10 @@ ID = "RPi_00_"
 
 burst_num = 5
 
-#TOKEN (DROPBOX)
+#DROPBOX USER INFORMATION
 
-token = ""
+app_key = 'so8ksun3q9jq9ob'
+app_secret = 'arssteb8pv6blxb'
 
 #BACKUP DAYS
 
@@ -68,23 +69,41 @@ def image_capture(count, camera, path_temp):
 		camera.capture(save_file, format='jpeg', quality=100)
 		print(get_time() + 'Image: ' + date + '_' + str(count) + ' successfully captured')
 	except:
-		print(get_time() + 'ERROR: Image capture fail')		
+		print(get_time() + 'ERROR: Image capture fail')	
+		
+def dropbox_token(app_key, app_secret):
+
+	# Create a new instance of the WebAuth class
+	web_auth = dropbox.oauth2.WebAuthNoRedirect(app_key, app_secret)
+
+        # Use the app key and secret to get a long-lived access token
+        try:
+            token, user_id, url_state = web_auth.finish(authorization_code)
+        except Exception as e:
+            print(f'Error: {e}')
+
+	return token
 
 def dropbox_upload(token, path_temp, path_backup):
-	if os.listdir(path_temp) == []:
-		print(get_time() + f"There are no files in the {path_temp} folder to upload to Dropbox")
-	else:
-		for file in os.listdir(path_temp):
-			f=open(os.path.join(path_temp,file), 'rb')
-			try:
-				dbx = dropbox.Dropbox(token)
-				res=dbx.files_upload(f.read(),'/' + file)
-				shutil.move(os.path.join(path_temp, file), os.path.join(path_backup, file))
-				print(get_time() + f'File {res.name} successfully uploaded to Dropbox and backup stored')
-			except dropbox.exceptions.ApiError as err:
-				print(get_time() + '*** API error', err)
-				return none
-		return res
+	try:
+		if os.listdir(path_temp) == []:
+			print(get_time() + f"There are no files in the {path_temp} folder to upload to Dropbox")
+		else:
+			for file in os.listdir(path_temp):
+				f=open(os.path.join(path_temp,file), 'rb')
+				try:
+					dbx = dropbox.Dropbox(token)
+					# Check the current token
+					print(dbx.users_get_current_account())
+					res=dbx.files_upload(f.read(),'/' + file)
+					shutil.move(os.path.join(path_temp, file), os.path.join(path_backup, file))
+					print(get_time() + f'File {res.name} successfully uploaded to Dropbox and backup stored')
+				except dropbox.exceptions.ApiError as err:
+					print(get_time() + '*** API error', err)
+					return none
+			return res
+	except:
+		print(get_time() + "Error DROPBOX - Error in the transfer of files to Dropbox")
 
 def delete_backup(path_backup, backup_days):
 	today = time.time()
@@ -103,7 +122,6 @@ def get_time():
 # MAIN CODE
 path_temp = "/home/pi/" + ID + "filetransfer"
 path_backup = "/home/pi/" + ID + "backup"
-
 camera = setup_camera()
 paths()
 delete_backup(path_backup, backup_days)
@@ -112,10 +130,7 @@ for count in range (1, burst_num+1):
 	image_capture(count, camera, path_temp)
 	sleep(1)
 	count=count + 1
-
 sleep(1)
-try:
-	dropbox_upload(token, path_temp, path_backup)
-except:
-	print(get_time() + "Error DROPBOX - Error in the transfer of files to Dropbox")
-print()
+token = dropbox_token(app_key, app_secret)
+res = dropbox_upload(token, path_temp, path_backup)
+print(res)
