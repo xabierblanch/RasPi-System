@@ -28,6 +28,7 @@ burst_num = 5
 
 app_key = 'so8ksun3q9jq9ob'
 app_secret = 'arssteb8pv6blxb'
+refresh_token = 'T7mJR4lhjX0AAAAAAAAAASkFb05o3F6cXSGv1GqzT8uxKJp86-nIiVMCBS56qXpm'
 
 #BACKUP DAYS
 
@@ -84,7 +85,7 @@ def dropbox_token(app_key, app_secret):
 
 	return token
 
-def dropbox_upload(token, path_temp, path_backup):
+def dropbox_upload(refresh_token, app_key, app_secret, path_temp, path_backup):
 	try:
 		if os.listdir(path_temp) == []:
 			print(get_time() + f"There are no files in the {path_temp} folder to upload to Dropbox")
@@ -92,9 +93,7 @@ def dropbox_upload(token, path_temp, path_backup):
 			for file in os.listdir(path_temp):
 				f=open(os.path.join(path_temp,file), 'rb')
 				try:
-					dbx = dropbox.Dropbox(token)
-					# Check the current token
-					print(dbx.users_get_current_account())
+					dbx = dropbox.Dropbox(app_key=app_key, app_secret=app_secret, oauth2_refresh_token=refresh_token)
 					res=dbx.files_upload(f.read(),'/' + file)
 					shutil.move(os.path.join(path_temp, file), os.path.join(path_backup, file))
 					print(get_time() + f'File {res.name} successfully uploaded to Dropbox and backup stored')
@@ -131,6 +130,6 @@ for count in range (1, burst_num+1):
 	sleep(1)
 	count=count + 1
 sleep(1)
-token = dropbox_token(app_key, app_secret)
-res = dropbox_upload(token, path_temp, path_backup)
+# token = dropbox_token(app_key, app_secret)
+res = dropbox_upload(refresh_token, app_key, app_secret, path_temp, path_backup)
 print(res)
