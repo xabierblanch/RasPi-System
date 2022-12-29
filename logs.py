@@ -6,27 +6,15 @@ import shutil
 
 app_key = 'so8ksun3q9jq9ob'
 app_secret = 'arssteb8pv6blxb'
+refresh_token = 'Kpm3y-06pRcAAAAAAAAAAWzz07NrxAkpHOLQmy6QwyAeVKyhwQk-VAeXZXtCExcD'
 
 #############################################################
 
-def dropbox_token(app_key, app_secret):
-
-	# Create a new instance of the WebAuth class
-	web_auth = dropbox.oauth2.WebAuthNoRedirect(app_key, app_secret)
-
-        # Use the app key and secret to get a long-lived access token
-        try:
-            token, user_id, url_state = web_auth.finish(authorization_code)
-        except Exception as e:
-            print(f'Error: {e}')
-
-	return token
-
-def dropbox_upload(token, path):
+def dropbox_upload(app_key, app_secret, refresh_token, path):
 	for file in os.listdir(path):
         	f=open(os.path.join(path,file), 'rb')
         	try:
-           		dbx = dropbox.Dropbox(token)
+           		dbx = dropbox.Dropbox(app_key=app_key, app_secret=app_secret, oauth2_refresh_token=refresh_token)
            		res=dbx.files_upload(f.read(),'/log/' + file, mode=dropbox.files.WriteMode.overwrite)
            		print('log', res.name, 'loaded to Dropbox')
         	except dropbox.exceptions.ApiError as err:
@@ -41,6 +29,5 @@ def copylogs(path):
 		print('ERROR: WittyPi log files')
 
 path = '/home/pi/logs'
-token = dropbox_token(app_key, app_secret)
 copylogs(path)
-dropbox_upload(token, path)
+dropbox_upload(app_key, app_secret, refresh_token, path)
