@@ -20,7 +20,6 @@ def dropbox_upload(token, path):
         	except dropbox.exceptions.ApiError as err:
            		print('*** API error', err)
            		return none
-	return res
 
 def copylogs(path):
 	try:
