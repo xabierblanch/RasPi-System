@@ -2,11 +2,11 @@ import os
 import dropbox
 import shutil
 
-#DROPBOX USER INFORMATION
+#DROPBOX USER INFORMATION (check official Dropbox API)
 
-app_key = 'so8ksun3q9jq9ob'
-app_secret = 'arssteb8pv6blxb'
-refresh_token = 'Kpm3y-06pRcAAAAAAAAAAWzz07NrxAkpHOLQmy6QwyAeVKyhwQk-VAeXZXtCExcD'
+app_key = ''
+app_secret = ''
+refresh_token = '' #https://github.com/dropbox/dropbox-sdk-python/blob/main/example/oauth/commandline-oauth.py
 
 #############################################################
 
