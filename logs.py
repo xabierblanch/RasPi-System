@@ -24,7 +24,7 @@ def dropbox_upload(token, path):
 
 def copylogs(path):
 	try:
-		shutil.copyfile('/home/pi/wittypi/wittyPi.log', os.path.join(path, 'wittyPi.log')
+		shutil.copyfile('/home/pi/wittypi/wittyPi.log', os.path.join(path, 'wittyPi.log'))
 		print('WittyPi log moved to log folder')
 	except:
 		print('ERROR: WittyPi log files')
