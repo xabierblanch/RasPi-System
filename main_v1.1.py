@@ -73,16 +73,15 @@ def image_capture(count, camera, path_temp):
 		print(get_time() + 'ERROR: Image capture fail')	
 		
 def dropbox_token(app_key, app_secret):
-
 	# Create a new instance of the WebAuth class
 	web_auth = dropbox.oauth2.WebAuthNoRedirect(app_key, app_secret)
 
         # Use the app key and secret to get a long-lived access token
-        try:
-            token, user_id, url_state = web_auth.finish(authorization_code)
-        except Exception as e:
-            print(f'Error: {e}')
-
+	try:
+		token, user_id, url_state = web_auth.finish(authorization_code)
+	except Exception as e:
+		print(f'Error: {e}')
+		
 	return token
 
 def dropbox_upload(refresh_token, app_key, app_secret, path_temp, path_backup):
