@@ -47,13 +47,13 @@ def setup_camera():
 
 		if camera.revision == 'imx477':
 			camera.resolution = (4056,3040)
-			print(get_time() + f'Camera HQ detected. Resolution: {camera.resolution}')
+			print(get_time() + f'Camera RPi HQ detected. Resolution: {camera.resolution}')
 		elif camera.revision == 'imx219':
 			camera.resolution = (3280, 2464)
-			print(get_time() + f'Camera V2 detected. Resolution: {camera.resolution}')
+			print(get_time() + f'Camera RPi V2 detected. Resolution: {camera.resolution}')
 		else:
 			camera.resolution = (2592, 1944)
-			print(get_time() + f'Camera V1 detected. Resolution: {camera.resolution}')
+			print(get_time() + f'Camera RPi V1 detected. Resolution: {camera.resolution}')
 	except:
 		print(get_time() + 'ERROR: Camera module not found')
 	return camera
@@ -83,7 +83,7 @@ def dropbox_upload(refresh_token, app_key, app_secret, path_temp, path_backup):
 					dbx = dropbox.Dropbox(app_key=app_key, app_secret=app_secret, oauth2_refresh_token=refresh_token)
 					res=dbx.files_upload(f.read(),'/' + file)
 					shutil.move(os.path.join(path_temp, file), os.path.join(path_backup, file))
-					print(get_time() + f'File {res.name} successfully uploaded to Dropbox and backup stored')
+					print(get_time() + f'{res.name} successfully uploaded to Dropbox')
 				except dropbox.exceptions.ApiError as err:
 					print(get_time() + '*** API error', err)
 					return none
@@ -99,15 +99,15 @@ def delete_backup(path_backup, backup_days):
 		if ((today - data_file) / (24*3600)) >= backup_days:
 			os.unlink(os.path.join(path_backup, file))
 			deleted = deleted + 1
-	print(get_time() + f"{deleted} files have been deleted due to exceeding the maximum backup days ({backup_days} days)")
+	print(get_time() + f"{deleted} files have been deleted from backup folder ({backup_days} days backup)")
 
 def get_time():
 	date = datetime.datetime.now().strftime('[%Y-%m-%d %H:%M:%S] ')
 	return date
 
 # MAIN CODE
-path_temp = "/home/pi/" + ID + "filetransfer"
-path_backup = "/home/pi/" + ID + "backup"
+path_temp = "/home/pi/" + ID + "_filetransfer"
+path_backup = "/home/pi/" + ID + "_backup"
 camera = setup_camera()
 paths()
 delete_backup(path_backup, backup_days)
