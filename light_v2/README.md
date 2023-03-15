@@ -37,6 +37,8 @@
 - [X] Install WittyPi software -> [WittyPi](https://www.uugear.com/product/witty-pi-3-realtime-clock-and-power-management-for-raspberry-pi/)
 - [X] Assembling the WittyPi and Camera to the RPi
 - [X] Create the mount folder (called USB):
+- [X] Install PyCamera library (sudo apt-get install python-picamera python3-picamera) -> [PiCamera](https://picamera.readthedocs.io/en/release-1.13/install.html)
+
 ```
 sudo mkdir /media/usb
 ```
